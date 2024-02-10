@@ -32,7 +32,7 @@
 }
 
 .text-lead {
-	@apply text-lg leading-6;
+	@apply text-xl leading-6 font-semibold;
 }
 
 .text-regular {

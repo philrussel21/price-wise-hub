@@ -8,6 +8,7 @@
 		"lint:fix": "eslint --fix ."
 	},
 	"dependencies": {
+		"@heroicons/react": "^2.1.1",
 		"@supabase/ssr": "latest",
 		"@supabase/supabase-js": "latest",
 		"autoprefixer": "10.4.17",
