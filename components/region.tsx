@@ -5,7 +5,7 @@ type RegionProperties = {
 
 const Region = ({children, className = ''}: RegionProperties): JSX.Element => {
 	return (
-		<section className={className}>
+		<section className={`mt-16 md:mt-24 ${className}`}>
 			{children}
 		</section>
 	);
