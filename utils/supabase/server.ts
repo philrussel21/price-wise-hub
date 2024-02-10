@@ -1,3 +1,5 @@
+'use server';
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {createServerClient, type CookieOptions} from '@supabase/ssr';
 import type {SupabaseClient} from '@supabase/supabase-js';

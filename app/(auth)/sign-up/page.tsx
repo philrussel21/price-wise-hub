@@ -1,36 +1,11 @@
 import Link from 'next/link';
-import {headers} from 'next/headers';
-import {createClient} from '@app/utils/supabase/server';
-import {redirect} from 'next/navigation';
 import {Container, Region} from '@app/components';
+import {signUp} from '@app/utils/actions/auth';
 
 type SignUpPageProperties = {
 	searchParams: {
 		message: string;
 	};
-};
-
-const signUp = async (formData: FormData): Promise<never> => {
-	'use server';
-
-	const origin = headers().get('origin') ?? '';
-	const email = formData.get('email') as string;
-	const password = formData.get('password') as string;
-	const supabase = createClient();
-
-	const {error} = await supabase.auth.signUp({
-		email,
-		password,
-		options: {
-			emailRedirectTo: `${origin}/api/auth/callback`,
-		},
-	});
-
-	if (error) {
-		return redirect('/signup?message=Could not authenticate user');
-	}
-
-	return redirect('/verify');
 };
 
 const SignUpPage = ({searchParams}: SignUpPageProperties): JSX.Element => {

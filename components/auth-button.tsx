@@ -1,6 +1,6 @@
+import {signOut} from '@app/utils/actions/auth';
 import {createClient} from '@app/utils/supabase/server';
 import Link from 'next/link';
-import {redirect} from 'next/navigation';
 import {Fragment} from 'react';
 
 const AuthButton = async (): Promise<JSX.Element> => {
@@ -9,15 +9,6 @@ const AuthButton = async (): Promise<JSX.Element> => {
 	const {
 		data: {user},
 	} = await supabase.auth.getUser();
-
-	const signOut = async (): Promise<never> => {
-		'use server';
-
-		const supabase = createClient();
-		await supabase.auth.signOut();
-
-		return redirect('/login');
-	};
 
 	return (
 		<Fragment>
