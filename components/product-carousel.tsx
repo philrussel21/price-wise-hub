@@ -19,6 +19,7 @@ const ProductCarousel = ({products}: ProductCarouselProperties): JSX.Element => 
 		// autoPlay
 		// infiniteLoop
 		showStatus={false}
+		showThumbs={false}
 		showArrows={false}
 	>
 		{products.map(product => (
