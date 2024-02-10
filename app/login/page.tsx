@@ -98,11 +98,11 @@ const LoginPage = ({searchParams}: LoginPageProperties): JSX.Element => {
 					name="password"
 					placeholder="••••••••"
 				/>
-				<button type="button" className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+				<button type="submit" className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
 					Sign In
 				</button>
 				<button
-					type="button"
+					type="submit"
 					formAction={signUp}
 					className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
 				>

@@ -1,3 +1,4 @@
+import {Header} from '@app/components';
 import './globals.css';
 
 type RootLayoutProperties = {
@@ -11,7 +12,12 @@ export const metadata = {
 
 const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
 	<html lang="en">
-		<body>{children}</body>
+		<body className="antialiased">
+			<main>
+				<Header/>
+				{children}
+			</main>
+		</body>
 	</html>
 );
 

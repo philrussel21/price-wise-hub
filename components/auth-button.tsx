@@ -25,7 +25,7 @@ const AuthButton = async (): Promise<JSX.Element> => {
 			{user.email}
 !
 			<form action={signOut}>
-				<button type="button" className="py-2 px-4 rounded-md no-underline bg-brand-primary hover:bg-brand-secondary">
+				<button type="submit" className="py-2 px-4 rounded-md no-underline bg-brand-primary hover:bg-brand-secondary">
 					Logout
 				</button>
 			</form>
