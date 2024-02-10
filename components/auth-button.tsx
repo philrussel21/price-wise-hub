@@ -1,37 +1,43 @@
-import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import {createClient} from '@app/utils/supabase/server';
+import Link from 'next/link';
+import {redirect} from 'next/navigation';
 
-export default async function AuthButton() {
-  const supabase = createClient();
+const AuthButton = async (): Promise<JSX.Element> => {
+	const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+	const {
+		data: {user},
+	} = await supabase.auth.getUser();
 
-  const signOut = async () => {
-    "use server";
+	const signOut = async (): Promise<never> => {
+		'use server';
 
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    return redirect("/login");
-  };
+		const supabase = createClient();
+		await supabase.auth.signOut();
 
-  return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOut}>
-        <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-          Logout
-        </button>
-      </form>
-    </div>
-  ) : (
-    <Link
-      href="/login"
-      className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-    >
-      Login
-    </Link>
-  );
-}
+		return redirect('/login');
+	};
+
+	return user ? (
+		<div className="flex items-center gap-4">
+			Hey,
+			{' '}
+			{user.email}
+!
+			<form action={signOut}>
+				<button type="button" className="py-2 px-4 rounded-md no-underline bg-brand-primary hover:bg-brand-secondary">
+					Logout
+				</button>
+			</form>
+		</div>
+	) : (
+		<Link
+			href="/login"
+			className="py-2 px-3 flex rounded-md no-underline bg-brand-primary hover:bg-brand-secondary"
+		>
+			Login
+		</Link>
+	);
+};
+
+export default AuthButton;
