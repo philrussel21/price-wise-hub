@@ -1,8 +1,8 @@
 import {Container, Heading, Region, Text} from '@app/components';
-import type {Product} from '@app/components/product-carousel';
+import type {ProductSlide} from '@app/components/product-carousel';
 import ProductCarousel from '@app/components/product-carousel';
 
-const products: Product[] = [
+const products: ProductSlide[] = [
 	{
 		imageSrc: '/images/product-1.png',
 		alt: 'Air force 1 07',

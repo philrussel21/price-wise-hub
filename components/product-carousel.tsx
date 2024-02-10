@@ -4,13 +4,13 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a lo
 import {Carousel} from 'react-responsive-carousel';
 import Image from 'next/image';
 
-type Product = {
+type ProductSlide = {
 	imageSrc: string;
 	alt: string;
 };
 
 type ProductCarouselProperties = {
-	products: Product[];
+	products: ProductSlide[];
 };
 
 const ProductCarousel = ({products}: ProductCarouselProperties): JSX.Element => (
@@ -39,5 +39,5 @@ export default ProductCarousel;
 
 export type {
 	ProductCarouselProperties as ProductCarouselProps,
-	Product,
+	ProductSlide,
 };
