@@ -1,5 +1,6 @@
 import {AuthButton} from '@app/components';
 import {createClient} from '@app/utils/supabase/server';
+import Link from 'next/link';
 
 const canInitSupabaseClient = (): boolean => {
 	// This function is just for the interactive tutorial.
@@ -20,9 +21,9 @@ const Header = async (): Promise<JSX.Element> => {
 		<header>
 			<nav className="w-full flex justify-center border-b h-16">
 				<div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-					<div>
-						Logo here
-					</div>
+					<Link href="/">
+						Price Wise Hub Logo
+					</Link>
 					{isSupabaseConnected && <AuthButton/>}
 				</div>
 			</nav>

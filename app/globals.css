@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.headline {
+	@apply text-4xl md:text-[56px] md:leading-[64px];
+}
+
+.heading-one {
+	@apply text-[28px] leading-[30px] md:text-[40px] md:leading-[48px] font-semibold tracking-[0.25px];
+}
+
+.heading-two {
+	@apply text-[22px] leading-8 md:text-[30px] md:leading-10 tracking-[0.25px] font-semibold;
+}
+
+.heading-three,
+.heading-four {
+	@apply text-xl leading-6 md:text-[22px] md:leading-8 tracking-[0.25px] font-semibold;
+}
+
+.heading-five {
+	@apply text-lg leading-6 font-medium;
+}
+
+.heading-six {
+	@apply text-base leading-5;
+}
+
+.subheading {
+	@apply text-sm uppercase font-bold tracking-wider;
+}
+
+.text-lead {
+	@apply text-lg leading-6;
+}
+
+.text-regular {
+	@apply text-base tracking-[0.25px];
+}
+
+.text-small {
+	@apply text-sm;
+}
