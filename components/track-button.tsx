@@ -6,10 +6,7 @@ import {Dialog} from '@headlessui/react';
 import {isNil} from 'remeda';
 import {Button, Heading, Text} from '@app/components';
 import {XMarkIcon} from '@heroicons/react/24/solid';
-import type {Store} from '@app/config/stores';
-import {stores} from '@app/config/stores';
-import Link from 'next/link';
-import {getProductType} from '@app/utils/product';
+import {isProductUrlValid} from '@app/utils/product';
 import {scrapeAndStoreProduct} from '@app/utils/actions/track';
 
 type TrackButtonProperties = {
@@ -17,18 +14,7 @@ type TrackButtonProperties = {
 	productId?: string;
 };
 
-type StoreButtonProperties = {
-	url: string;
-	icon: React.ElementType;
-};
-
-const StoreButton = ({url, icon: Icon}: StoreButtonProperties): JSX.Element => (
-	<Link href={url} className="inline-block p-4">
-		<Icon className="bg-black w-56"/>
-	</Link>
-);
-
-const ERROR_MESSAGE = 'Unsupported store link. Please provide a valid link from the supported stores above';
+const ERROR_MESSAGE = 'Unsupported store link. Please provide a valid link.';
 
 const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,13 +32,12 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 	const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value;
 		setUrl(value);
-	}, [stores]);
+	}, []);
 
 	const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const productType = getProductType(url);
 
-		if (isNil(productType)) {
+		if (!isProductUrlValid(url)) {
 			setHasError(true);
 
 			return;
@@ -98,16 +83,6 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 										/>
 										<Button.Semantic type="submit" label="Track price"/>
 									</form>
-									<div>
-										<Heading variant="heading-four" label="Supported stores"/>
-										<ul>
-											{Object.keys(stores).map(store => (
-												<li key={stores[store as Store].url} className="w-full">
-													<StoreButton url={stores[store as Store].url} icon={stores[store as Store].logo}/>
-												</li>
-											))}
-										</ul>
-									</div>
 									{hasError && (
 										<Text className="p-4 bg-red-300 rounded-2xl">{ERROR_MESSAGE}</Text>
 									)}

@@ -1,17 +1,13 @@
 'use server';
 
 import axios from 'axios';
-import {isNil} from 'remeda';
 import cheerio from 'cheerio';
-import {getProductType} from '../product';
-import {formatPlatypusData} from '../stores/platypus';
-import type {StoreProduct} from '@app/config/common-types';
+import {isProductUrlValid} from '../product';
 
 const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 	// const supabase = createClient();
-	const productType = getProductType(productUrl);
 
-	if (isNil(productType)) {
+	if (!isProductUrlValid(productUrl)) {
 		return;
 	}
 

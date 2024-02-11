@@ -1,5 +1,3 @@
-import type {Store} from './stores';
-
 type Parameters = {
 	id: string;
 };
@@ -18,7 +16,6 @@ type Product = {
 	highestPrice: string;
 	sizes: ProductSize[];
 	url: string;
-	store: Store;
 	onSale: boolean;
 };
 

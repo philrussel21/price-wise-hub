@@ -1,26 +1,15 @@
-/* eslint-disable unicorn/no-null */
-import type {Store} from '@app/config/stores';
-import {stores} from '@app/config/stores';
-import {isNil} from 'remeda';
+import {STORE_URL} from '@app/config/constants';
 
-const getProductType = (urlString: string): Store | null => {
+const isProductUrlValid = (urlString: string): boolean => {
 	try {
 		const url = new URL(urlString);
-		// const validValues = Object.keys(stores).map(store => stores[store as Store].url);
-
-		// return validValues.includes(url.origin);
-		const productType = Object.keys(stores).find(store => stores[store as Store].url === url.origin);
-
-		if (isNil(productType)) {
-			return null;
-		}
-
-		return productType as Store;
+		
+		return url.origin === STORE_URL;
 	} catch {
-		return null;
+		return false;
 	}
 };
 
 export {
-	getProductType,
+	isProductUrlValid,
 };

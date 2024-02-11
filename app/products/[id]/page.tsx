@@ -1,6 +1,5 @@
 import {Container, ProductDetails, Region} from '@app/components';
 import type {Params} from '@app/config/common-types';
-import type {Store} from '@app/config/stores';
 
 type ProductPageProperties = {
 	params: Params;
@@ -8,7 +7,7 @@ type ProductPageProperties = {
 
 const testData = {
 	id: '1',
-	imageSrc: 'https://www.platypusshoes.com.au/media/catalog/product/0/5/051793_bfblk_01.jpeg?auto=webp&quality=85&format=pjpg&width=100%25&fit=cover',
+	imageSrc: 'https://www.nike.com/au/t/air-force-1-07-shoes-lkVhs6/DC9486-101',
 	name: 'Arizona Black - Narrow',
 	currentPrice: '$174.99',
 	lowestPrice: '$174.99',
@@ -40,7 +39,6 @@ const testData = {
 		},
 	],
 	url: '/',
-	store: 'platypus' as Store,
 	onSale: true,
 };
 
