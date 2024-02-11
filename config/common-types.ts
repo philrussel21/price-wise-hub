@@ -10,6 +10,7 @@ type ProductSize = {
 type Product = {
 	id: string;
 	name: string;
+	category: string;
 	imageSrc: string;
 	currentPrice: string;
 	lowestPrice: string;
@@ -19,11 +20,17 @@ type Product = {
 	onSale: boolean;
 };
 
-type StoreProduct = Partial<Product>;
+type ProductSizeQuery = {
+	skuId: string;
+	nikeSize: string;
+};
+
+type ProductQuery = Omit<Product, 'id'>;
 
 export type {
 	Parameters as Params,
 	Product,
 	ProductSize,
-	StoreProduct,
+	ProductQuery,
+	ProductSizeQuery,
 };

@@ -1,8 +1,7 @@
 'use server';
 
 import axios from 'axios';
-import cheerio from 'cheerio';
-import {isProductUrlValid} from '../product';
+import {formatProductData, isProductUrlValid} from '../product';
 
 const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 	// const supabase = createClient();
@@ -29,25 +28,11 @@ const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 
 	try {
 		const {data} = await axios.get<string>(productUrl, options);
-		// let storeProduct: StoreProduct;
 
-		// switch (productType) {
-		// 	case 'footlocker': {
-		// 		// TODO: implement footlocker parsing
-		// 		storeProduct = {
-		// 			name: 'Test',
-		// 		};
-		// 		break;
-		// 	}
+		const formattedProduct = await formatProductData(data, productUrl);
+		console.log(formattedProduct);
 
-		// 	default: {
-		// 		storeProduct = formatPlatypusData(data);
-		// 		break;
-		// 	}
-		// }
-		console.log(data);
-
-		// console.log(storeProduct);
+		// Store product in database
 	} catch (error: unknown) {
 		console.log(error);
 	}
