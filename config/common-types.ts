@@ -22,8 +22,11 @@ type Product = {
 	onSale: boolean;
 };
 
+type StoreProduct = Partial<Product>;
+
 export type {
 	Parameters as Params,
 	Product,
 	ProductSize,
+	StoreProduct,
 };

@@ -9,6 +9,8 @@ import {XMarkIcon} from '@heroicons/react/24/solid';
 import type {Store} from '@app/config/stores';
 import {stores} from '@app/config/stores';
 import Link from 'next/link';
+import {getProductType} from '@app/utils/product';
+import {scrapeAndStoreProduct} from '@app/utils/actions/track';
 
 type TrackButtonProperties = {
 	label: string;
@@ -46,22 +48,19 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 		setUrl(value);
 	}, [stores]);
 
-	const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		try {
-			const urlObject = new URL(url);
-			const validValues = Object.keys(stores).map(store => stores[store as Store].url);
+		const productType = getProductType(url);
 
-			if (!validValues.includes(urlObject.origin)) {
-				setHasError(true);
-
-				return;
-			}
-			setHasError(false);
-		} catch {
+		if (isNil(productType)) {
 			setHasError(true);
+
+			return;
 		}
-	}, [stores, url]);
+
+		setHasError(false);
+		await scrapeAndStoreProduct(url);
+	}, [url]);
 
 	if (isNil(productId)) {
 		return (
@@ -81,7 +80,7 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 							<Dialog.Title>
 								<Heading variant="heading-three" label="Track Product Price"/>
 							</Dialog.Title>
-							<Dialog.Description>
+							<Dialog.Description as="div">
 								<div className="flex flex-col gap-y-4">
 									<Text>
 										Enter the url of product you&apos;d like to track
