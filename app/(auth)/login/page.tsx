@@ -34,7 +34,7 @@ const LoginPage = ({searchParams}: LoginPageProperties): JSX.Element => {
 				Back
 				</Link>
 				<form
-					className="animate-in flex-1 flex flex-col w-full justify-center gap-"
+					className="flex-1 flex flex-col w-full justify-center"
 					action={signIn}
 				>
 					<label className="text-md" htmlFor="email">

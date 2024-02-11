@@ -12,7 +12,7 @@ const variantClasses: Record<Variant, string> = {
 	secondary: 'bg-brand-secondary hover:bg-brand-primary',
 };
 
-const baseClasses = 'p-4 inline-block rounded-2xl text-center';
+const baseClasses = 'p-4 inline-block rounded-2xl text-center disabled:opacity-50 disabled:pointer-events-none';
 
 type SemanticButtonProperties = BaseButtonProperties & React.ComponentPropsWithoutRef<'button'>;
 type LinkButtonProperties = BaseButtonProperties & React.ComponentPropsWithoutRef<'a'> & {href: string};

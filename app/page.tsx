@@ -1,4 +1,4 @@
-import {Container, Heading, Region, Text} from '@app/components';
+import {Container, Heading, Region, Text, TrackButton} from '@app/components';
 import type {ProductSlide} from '@app/components/product-carousel';
 import ProductCarousel from '@app/components/product-carousel';
 
@@ -32,6 +32,7 @@ const Index = (): JSX.Element => {
 				<div>
 					<Heading variant="heading-one" element="h1" label="Price Wise Hub"/>
 					<Text>Lorem ipsum dolor sit amet consectetur adipiscing elit leo quam, primis nostra blandit nunc sagittis fames elementum nisi, vestibulum dictum massa nec facilisis justo platea nulla augue, aptent ridiculus nullam sapien class montes dis. Lacinia proin nisl felis ac vehicula, nascetur tempus potenti luctus interdum gravida, tortor dictumst ut duis.</Text>
+					<TrackButton label="Trigger modal"/>
 				</div>
 				<div>
 					<ProductCarousel products={products}/>

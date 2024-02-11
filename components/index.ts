@@ -7,3 +7,4 @@ export {default as ProductCarousel} from './product-carousel';
 export {default as ProductDetails} from './product-details';
 export {default as Region} from './region';
 export {default as Text} from './text';
+export {default as TrackButton} from './track-button';

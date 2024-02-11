@@ -4,11 +4,11 @@ type Store = keyof typeof stores;
 
 const stores = {
 	platypus: {
-		url: 'https://platypusshoes.com.au/',
+		url: 'https://www.platypusshoes.com.au',
 		logo: SVG.Platypus,
 	},
 	footlocker: {
-		url: 'https://www.footlocker.com.au/',
+		url: 'https://www.footlocker.com.au',
 		logo: SVG.Footlocker},
 };
 

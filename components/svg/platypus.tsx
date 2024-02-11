@@ -1,5 +1,9 @@
-const Platypus = (): JSX.Element => (
-	<svg xmlns="http://www.w3.org/2000/svg" width="104" height="20" viewBox="0 0 104 20">
+const Platypus = ({className}: {className?: string}): JSX.Element => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 104 20"
+		className={className}
+	>
 		<g fill="none" fillRule="evenodd">
 			<g fillRule="nonzero">
 				<g>
