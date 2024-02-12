@@ -51,7 +51,6 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	const currentPrice = salePrice === '' ? Number.parseFloat(productPrice) : Number.parseFloat(salePrice);
 	const lowestPrice = isNil(previousProduct) || previousProduct.lowestPrice > currentPrice ? currentPrice : previousProduct.lowestPrice;
 	const highestPrice = isNil(previousProduct) || previousProduct.highestPrice < Number.parseFloat(productPrice) ? Number.parseFloat(productPrice) : previousProduct.highestPrice;
-	const onSale = salePrice === '';
 
 	return {
 		name,
@@ -61,7 +60,6 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 		lowestPrice,
 		highestPrice,
 		sizes,
-		onSale,
 		url: productUrl,
 	};
 };

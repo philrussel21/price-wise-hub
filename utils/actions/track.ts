@@ -1,7 +1,11 @@
 'use server';
 
+import {revalidatePath} from 'next/cache';
+import {redirect} from 'next/navigation';
 import axios from 'axios';
+import {isNil} from 'remeda';
 import {formatProductData, isProductUrlValid} from '../product';
+import {upsertProduct} from '../supabase/upsert-product';
 
 const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 	// const supabase = createClient();
@@ -25,16 +29,32 @@ const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 		port,
 		rejectUnauthorized: false,
 	};
+	let id;
 
 	try {
 		const {data} = await axios.get<string>(productUrl, options);
 
 		const formattedProduct = await formatProductData(data, productUrl);
-		console.log(formattedProduct);
+		const response = await upsertProduct(formattedProduct);
 
-		// Store product in database
+		if (!isNil(response.error)) {
+			throw new Error(response.error.message);
+		}
+
+		// Unlikely scenario when there's no data and no error
+		if (isNil(response.id)) {
+			throw new Error('No id returned');
+		}
+
+		id = response.id;
 	} catch (error: unknown) {
 		console.log(error);
+	} finally {
+		if (isNil(id)) {
+			redirect('/');
+		}
+		revalidatePath(`/products/${id}`, 'page');
+		redirect(`/products/${id}`);
 	}
 };
 

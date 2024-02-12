@@ -25,7 +25,7 @@ type ProductSizeQuery = {
 	nikeSize: string;
 };
 
-type ProductQuery = Omit<Product, 'id'>;
+type ProductQuery = Omit<Product, 'id' | 'onSale'>;
 
 export type {
 	Parameters as Params,
