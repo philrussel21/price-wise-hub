@@ -12,9 +12,9 @@ type Product = {
 	name: string;
 	category: string;
 	imageSrc: string;
-	currentPrice: string;
-	lowestPrice: string;
-	highestPrice: string;
+	currentPrice: number;
+	lowestPrice: number;
+	highestPrice: number;
 	sizes: ProductSize[];
 	url: string;
 	onSale: boolean;

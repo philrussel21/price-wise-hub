@@ -19,17 +19,17 @@ const ProductDetails = ({product}: ProductDetailsProperties): JSX.Element => (
 				<div className="rounded-2xl p-2 flex flex-col items-center bg-gray-200">
 					<ArrowTrendingDownIcon className="w-10 text-green-500 fill-current"/>
 					<Heading variant="heading-three" label="Lowest"/>
-					<Text className="block" variant="text-lead">{product.lowestPrice}</Text>
+					<Text className="block" variant="text-lead">{`$${product.lowestPrice}`}</Text>
 				</div>
 				<div className="rounded-2xl p-2 flex flex-col items-center bg-gray-200">
 					<CurrencyDollarIcon className="w-10 text-orange-500 fill-current"/>
 					<Heading variant="heading-three" label="Current"/>
-					<Text className="block" variant="text-lead">{product.currentPrice}</Text>
+					<Text className="block" variant="text-lead">{`$${product.currentPrice}`}</Text>
 				</div>
 				<div className="rounded-2xl p-2 flex flex-col items-center bg-gray-200">
 					<ArrowTrendingUpIcon className="w-10 text-red-500 fill-current"/>
 					<Heading variant="heading-three" label="Highest"/>
-					<Text className="block" variant="text-lead">{product.highestPrice}</Text>
+					<Text className="block" variant="text-lead">{`$${product.highestPrice}`}</Text>
 				</div>
 			</div>
 			<div className="mt-6">

@@ -18,8 +18,8 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 
 	// Scrape product details from returned html
 	const name = $('h1').text().trim();
-	const productPrice = $('[data-test=product-price]').text().trim();
-	const salePrice = $('[data-test=product-price-reduced]').text().trim();
+	const productPrice = $('[data-test=product-price]').text().trim().replaceAll(/[^\d.]/g, '');
+	const salePrice = $('[data-test=product-price-reduced]').text().trim().replaceAll(/[^\d.]/g, '');
 	const category = $('[data-test=product-sub-title]').text().trim();
 	const imageSource = $('#pdp_6up-hero').prop('src');
 
@@ -48,9 +48,9 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	// TODO: Check if there's been any changes with the previousProduct and new product details
 	// prior to updating the DB.
 
-	const currentPrice = salePrice === '' ? productPrice : salePrice;
+	const currentPrice = salePrice === '' ? Number.parseFloat(productPrice) : Number.parseFloat(salePrice);
 	const lowestPrice = isNil(previousProduct) || previousProduct.lowestPrice > currentPrice ? currentPrice : previousProduct.lowestPrice;
-	const highestPrice = isNil(previousProduct) || previousProduct.highestPrice < productPrice ? productPrice : previousProduct.highestPrice;
+	const highestPrice = isNil(previousProduct) || previousProduct.highestPrice < Number.parseFloat(productPrice) ? Number.parseFloat(productPrice) : previousProduct.highestPrice;
 	const onSale = salePrice === '';
 
 	return {
