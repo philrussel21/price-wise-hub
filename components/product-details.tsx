@@ -1,10 +1,7 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, CurrencyDollarIcon} from '@heroicons/react/24/solid';
 import type {Product} from '@app/config/common-types';
 import {Button, Heading, Text} from '@app/components';
-import Nike from './svg/nike';
-import {STORE_URL} from '@app/config/constants';
 
 type ProductDetailsProperties = {
 	product: Product;
@@ -13,15 +10,11 @@ type ProductDetailsProperties = {
 const ProductDetails = ({product}: ProductDetailsProperties): JSX.Element => (
 	<div className="flex flex-col lg:flex-row gap-x-8 bg-white shadow-2xl rounded-2xl overflow-hidden">
 		<div>
-			<Image width={800} height={200} alt={product.name} src={product.imageSrc}/>
+			<Image width={600} height={200} alt={product.name} src={product.imageSrc}/>
 		</div>
 		<div className="pl-8 lg:pl-0 py-8 pr-8 flex-grow">
 			<Heading variant="heading-one" element="h1" label={`${product.name}`}/>
-			<Link href={STORE_URL} target="_blank" rel="no-referrer" className="mt-2 inline-block">
-				<span className="bg-black p-4 inline-block">
-					<Nike className="w-48 h-18"/>
-				</span>
-			</Link>
+			<Heading variant="heading-three" element="h2" label={`${product.category}`}/>
 			<div className="grid lg:grid-cols-3 gap-6 mt-6">
 				<div className="rounded-2xl p-2 flex flex-col items-center bg-gray-200">
 					<ArrowTrendingDownIcon className="w-10 text-green-500 fill-current"/>
@@ -40,7 +33,7 @@ const ProductDetails = ({product}: ProductDetailsProperties): JSX.Element => (
 				</div>
 			</div>
 			<div className="mt-6">
-				<Heading variant="heading-two" element="h2" label="Sizes"/>
+				<Heading variant="heading-four" element="h3" label="Sizes"/>
 				<ul className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-4">
 					{product.sizes.map(size => (
 						<li key={size.label}>

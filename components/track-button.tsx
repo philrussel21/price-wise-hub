@@ -44,6 +44,9 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 		}
 
 		setHasError(false);
+
+		// TODO: Check if the url provided is already in the database
+
 		await scrapeAndStoreProduct(url);
 	}, [url]);
 

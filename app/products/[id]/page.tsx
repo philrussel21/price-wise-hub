@@ -7,8 +7,9 @@ type ProductPageProperties = {
 
 const testData = {
 	id: '1',
-	imageSrc: 'https://www.nike.com/au/t/air-force-1-07-shoes-lkVhs6/DC9486-101',
+	imageSrc: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/7196bf6b-fb84-4dcd-94ae-32e56df438fd/luka-2-bred-basketball-shoes-W1GZ1g.png',
 	name: 'Arizona Black - Narrow',
+	category: 'Basketball Shoes',
 	currentPrice: '$174.99',
 	lowestPrice: '$174.99',
 	highestPrice: '$200.00',

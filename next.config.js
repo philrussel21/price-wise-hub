@@ -4,9 +4,9 @@ const nextConfig = {
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'www.platypusshoes.com.au',
+				hostname: 'static.nike.com',
 				port: '',
-				pathname: '/media/catalog/product/**',
+				pathname: '/**',
 			},
 		],
 	},
