@@ -1,8 +1,8 @@
+import {notFound} from 'next/navigation';
+import {isNil} from 'remeda';
 import {Container, ProductDetails, Region} from '@app/components';
 import type {Params, Product} from '@app/config/common-types';
 import {getProduct} from '@app/data/product';
-import {redirect} from 'next/navigation';
-import {isNil} from 'remeda';
 
 type ProductPageProperties = {
 	params: Params;
@@ -23,7 +23,7 @@ const ProductPage = async ({params}: ProductPageProperties): Promise<JSX.Element
 	const data = await getData(params.id);
 
 	if (isNil(data)) {
-		redirect('/');
+		notFound();
 	}
 
 	return (
