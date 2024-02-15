@@ -1,7 +1,33 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable unicorn/no-null */
 import {load} from 'cheerio';
 import {isNil} from 'remeda';
+import type {PostgrestError} from '@supabase/supabase-js';
 import type {Product, ProductQuery, ProductSize, ProductSizeQuery} from '@app/config/common-types';
-import {STORE_URL} from '@app/config/constants';
+import {createClient} from '../utils/supabase/server';
+import {PRODUCTS_TABLE, STORE_URL} from '@app/config/constants';
+
+type PostgrestResponse = {
+	id: string;
+};
+
+type UpsertProductResponse = {
+	id: string | null;
+	error: PostgrestError | null;
+};
+
+const formatDatabaseResponse = (data: ProductQuery, id: string): Product => ({
+	id,
+	name: data.name,
+	category: data.category,
+	imageSrc: data.image_src,
+	currentPrice: data.current_price,
+	lowestPrice: data.lowest_price,
+	highestPrice: data.highest_price,
+	sizes: data.sizes,
+	url: data.url,
+	onSale: data.is_on_sale,
+});
 
 const isProductUrlValid = (urlString: string): boolean => {
 	try {
@@ -47,24 +73,65 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 
 	// TODO: Check if there's been any changes with the previousProduct and new product details
 	// prior to updating the DB.
-
-	const currentPrice = salePrice === '' ? Number.parseFloat(productPrice) : Number.parseFloat(salePrice);
+	const isOnSale = salePrice !== '';
+	const currentPrice = isOnSale ? Number.parseFloat(salePrice) : Number.parseFloat(productPrice);
 	const lowestPrice = isNil(previousProduct) || previousProduct.lowestPrice > currentPrice ? currentPrice : previousProduct.lowestPrice;
 	const highestPrice = isNil(previousProduct) || previousProduct.highestPrice < Number.parseFloat(productPrice) ? Number.parseFloat(productPrice) : previousProduct.highestPrice;
 
 	return {
 		name,
-		imageSrc: imageSource ?? '',
+		image_src: imageSource ?? '',
 		category,
-		currentPrice,
-		lowestPrice,
-		highestPrice,
+		current_price: currentPrice,
+		lowest_price: lowestPrice,
+		highest_price: highestPrice,
 		sizes,
 		url: productUrl,
+		is_on_sale: isOnSale,
+	};
+};
+
+const getProduct = async (id: string): Promise<Product | null> => {
+	const supabase = createClient();
+
+	const {data, error} = await supabase
+		.from(PRODUCTS_TABLE)
+		.select('*')
+		.match({id})
+		.single<ProductQuery>();
+
+	if (!isNil(error)) {
+		throw new Error(`Error getting the product: ${error.message}`);
+	}
+
+	if (isNil(data)) {
+		return data;
+	}
+
+	return formatDatabaseResponse(data, id);
+};
+
+const upsertProduct = async (product: ProductQuery, productId?: string): Promise<UpsertProductResponse> => {
+	const supabase = createClient();
+
+	const {data, error} = await supabase
+		.from(PRODUCTS_TABLE)
+		.upsert({
+			id: productId,
+			...product,
+		})
+		.select('id')
+		.single<PostgrestResponse>();
+
+	return {
+		id: data?.id ?? null,
+		error,
 	};
 };
 
 export {
 	isProductUrlValid,
 	formatProductData,
+	upsertProduct,
+	getProduct,
 };

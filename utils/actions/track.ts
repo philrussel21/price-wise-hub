@@ -4,12 +4,9 @@ import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
 import axios from 'axios';
 import {isNil} from 'remeda';
-import {formatProductData, isProductUrlValid} from '../product';
-import {upsertProduct} from '../supabase/upsert-product';
+import {formatProductData, isProductUrlValid, upsertProduct} from '@app/data/product';
 
 const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
-	// const supabase = createClient();
-
 	if (!isProductUrlValid(productUrl)) {
 		return;
 	}

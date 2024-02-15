@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 type Parameters = {
 	id: string;
 };
@@ -20,12 +21,22 @@ type Product = {
 	onSale: boolean;
 };
 
+type ProductQuery = {
+	name: string;
+	category: string;
+	image_src: string;
+	current_price: number;
+	lowest_price: number;
+	sizes: ProductSize[];
+	highest_price: number;
+	is_on_sale: boolean;
+	url: string;
+};
+
 type ProductSizeQuery = {
 	skuId: string;
 	nikeSize: string;
 };
-
-type ProductQuery = Omit<Product, 'id' | 'onSale'>;
 
 export type {
 	Parameters as Params,

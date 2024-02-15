@@ -6,7 +6,7 @@ import {Dialog} from '@headlessui/react';
 import {isNil} from 'remeda';
 import {Button, Heading, Text} from '@app/components';
 import {XMarkIcon} from '@heroicons/react/24/solid';
-import {isProductUrlValid} from '@app/utils/product';
+import {isProductUrlValid} from '@app/data/product';
 import {scrapeAndStoreProduct} from '@app/utils/actions/track';
 
 type TrackButtonProperties = {
