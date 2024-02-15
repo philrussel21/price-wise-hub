@@ -10,7 +10,13 @@ type ProductDetailsProperties = {
 const ProductDetails = ({product}: ProductDetailsProperties): JSX.Element => (
 	<div className="flex flex-col lg:flex-row gap-x-8 bg-white shadow-2xl rounded-2xl overflow-hidden">
 		<div>
-			<Image width={600} height={200} alt={product.name} src={product.imageSrc}/>
+			<Image
+				priority
+				width={600}
+				height={200}
+				alt={product.name}
+				src={product.imageSrc}
+			/>
 		</div>
 		<div className="pl-8 lg:pl-0 py-8 pr-8 flex-grow">
 			<Heading variant="heading-one" element="h1" label={`${product.name}`}/>
