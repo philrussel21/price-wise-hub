@@ -3,7 +3,7 @@
 import {load} from 'cheerio';
 import {isNil} from 'remeda';
 import type {PostgrestError} from '@supabase/supabase-js';
-import type {Product, ProductQuery, ProductSize, ProductSizeQuery} from '@app/config/common-types';
+import type {PartialProductQuery, Product, ProductQuery, ProductSize, ProductSizeQuery} from '@app/config/common-types';
 import {createClient} from '../utils/supabase/server';
 import {PRODUCTS_TABLE, STORE_URL} from '@app/config/constants';
 
@@ -16,8 +16,8 @@ type UpsertProductResponse = {
 	error: PostgrestError | null;
 };
 
-const formatDatabaseResponse = (data: ProductQuery, id: string): Product => ({
-	id,
+const formatDatabaseResponse = (data: ProductQuery): Product => ({
+	id: data.id,
 	name: data.name,
 	category: data.category,
 	imageSrc: data.image_src,
@@ -39,7 +39,7 @@ const isProductUrlValid = (urlString: string): boolean => {
 	}
 };
 
-const formatProductData = async (scrappedString: string, productUrl: string, previousProduct?: Product): Promise<ProductQuery> => {
+const formatProductData = async (scrappedString: string, productUrl: string, previousProduct?: Product): Promise<PartialProductQuery> => {
 	const $ = load(scrappedString);
 
 	// Scrape product details from returned html
@@ -108,10 +108,31 @@ const getProduct = async (id: string): Promise<Product | null> => {
 		return data;
 	}
 
-	return formatDatabaseResponse(data, id);
+	return formatDatabaseResponse(data);
 };
 
-const upsertProduct = async (product: ProductQuery, productId?: string): Promise<UpsertProductResponse> => {
+const getExistingProduct = async (url: string): Promise<Product | null> => {
+	const supabase = createClient();
+
+	const {data, error} = await supabase
+		.from(PRODUCTS_TABLE)
+		.select('*')
+		.match({url})
+		.maybeSingle<ProductQuery>();
+
+	if (!isNil(error)) {
+		throw new Error(`Error checking product by url: ${error.message}`);
+	}
+
+	if (isNil(data)) {
+		return data;
+	}
+
+	return formatDatabaseResponse(data);
+};
+
+// TODO: update response to align with the other requests
+const upsertProduct = async (product: PartialProductQuery, productId?: string): Promise<UpsertProductResponse> => {
 	const supabase = createClient();
 
 	const {data, error} = await supabase
@@ -134,4 +155,5 @@ export {
 	formatProductData,
 	upsertProduct,
 	getProduct,
+	getExistingProduct,
 };

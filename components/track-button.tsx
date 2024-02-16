@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-null */
 'use client';
 
 import type {ChangeEvent, FormEvent} from 'react';
@@ -7,7 +8,8 @@ import {isNil} from 'remeda';
 import {Button, Heading, Text} from '@app/components';
 import {XMarkIcon} from '@heroicons/react/24/solid';
 import {isProductUrlValid} from '@app/data/product';
-import {scrapeAndStoreProduct} from '@app/utils/actions/track';
+import {checkDuplicateProduct, scrapeAndStoreProduct} from '@app/utils/actions/track';
+import type {Product} from '@app/config/common-types';
 
 type TrackButtonProperties = {
 	label: string;
@@ -20,6 +22,7 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [url, setUrl] = useState('');
 	const [hasError, setHasError] = useState(false);
+	const [existingProduct, setExistingProduct] = useState<Product | null>(null);
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true);
@@ -36,16 +39,21 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 
 	const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setExistingProduct(null);
 
 		if (!isProductUrlValid(url)) {
 			setHasError(true);
 
 			return;
 		}
-
 		setHasError(false);
+		const duplicate = await checkDuplicateProduct(url);
 
-		// TODO: Check if the url provided is already in the database
+		if (!isNil(duplicate)) {
+			setExistingProduct(duplicate);
+
+			return;
+		}
 
 		await scrapeAndStoreProduct(url);
 	}, [url]);
@@ -88,6 +96,9 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 									</form>
 									{hasError && (
 										<Text className="p-4 bg-red-300 rounded-2xl">{ERROR_MESSAGE}</Text>
+									)}
+									{!isNil(existingProduct) && (
+										<Text>{existingProduct.name}</Text>
 									)}
 								</div>
 							</Dialog.Description>

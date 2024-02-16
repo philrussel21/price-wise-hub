@@ -4,7 +4,8 @@ import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
 import axios from 'axios';
 import {isNil} from 'remeda';
-import {formatProductData, isProductUrlValid, upsertProduct} from '@app/data/product';
+import {formatProductData, getExistingProduct, isProductUrlValid, upsertProduct} from '@app/data/product';
+import type {Product} from '@app/config/common-types';
 
 const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 	if (!isProductUrlValid(productUrl)) {
@@ -55,6 +56,20 @@ const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 	}
 };
 
+const checkDuplicateProduct = async (url: string): Promise<Product | null> => {
+	try {
+		const duplicate = await getExistingProduct(url);
+
+		return duplicate;
+	} catch (error: unknown) {
+		console.log(error);
+
+		// eslint-disable-next-line unicorn/no-null
+		return null;
+	}
+};
+
 export {
 	scrapeAndStoreProduct,
+	checkDuplicateProduct,
 };

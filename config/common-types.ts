@@ -22,6 +22,7 @@ type Product = {
 };
 
 type ProductQuery = {
+	id: string;
 	name: string;
 	category: string;
 	image_src: string;
@@ -32,6 +33,8 @@ type ProductQuery = {
 	is_on_sale: boolean;
 	url: string;
 };
+
+type PartialProductQuery = Omit<ProductQuery, 'id'>;
 
 type ProductSizeQuery = {
 	skuId: string;
@@ -44,4 +47,5 @@ export type {
 	ProductSize,
 	ProductQuery,
 	ProductSizeQuery,
+	PartialProductQuery,
 };
