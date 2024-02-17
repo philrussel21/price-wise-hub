@@ -12,13 +12,14 @@ import {checkDuplicateProduct, scrapeAndStoreProduct} from '@app/utils/actions/t
 import type {Product} from '@app/config/common-types';
 
 type TrackButtonProperties = {
+	hasUser: boolean;
 	label: string;
 	productId?: string;
 };
 
 const ERROR_MESSAGE = 'Unsupported store link. Please provide a valid link.';
 
-const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => {
+const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.Element => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [url, setUrl] = useState('');
 	const [hasError, setHasError] = useState(false);
@@ -29,6 +30,9 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 	}, []);
 
 	const handleCloseModal = useCallback(() => {
+		setUrl('');
+		setHasError(false);
+		setExistingProduct(null);
 		setIsModalOpen(false);
 	}, []);
 
@@ -40,6 +44,10 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 	const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setExistingProduct(null);
+
+		if (!hasUser) {
+			return;
+		}
 
 		if (!isProductUrlValid(url)) {
 			setHasError(true);
@@ -56,7 +64,7 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 		}
 
 		await scrapeAndStoreProduct(url);
-	}, [url]);
+	}, [url, hasUser]);
 
 	if (isNil(productId)) {
 		return (
@@ -92,10 +100,19 @@ const TrackButton = ({productId, label}: TrackButtonProperties): JSX.Element => 
 											value={url}
 											onChange={handleInputChange}
 										/>
-										<Button.Semantic type="submit" label="Track price"/>
+										<Button.Semantic disabled={!hasUser} type="submit" label="Track price"/>
 									</form>
 									{hasError && (
 										<Text className="p-4 bg-red-300 rounded-2xl">{ERROR_MESSAGE}</Text>
+									)}
+									{!hasUser && (
+										<div className="bg-orange-300 rounded-2xl p-4">
+											<Text>Please login or sign up to continue</Text>
+											<div className="flex flex-col gap-y-2 mt-4">
+												<Button.Link href="/login" label="Login"/>
+												<Button.Link href="/sign-up" variant="secondary" label="Sign up"/>
+											</div>
+										</div>
 									)}
 									{!isNil(existingProduct) && (
 										<Text>{existingProduct.name}</Text>
