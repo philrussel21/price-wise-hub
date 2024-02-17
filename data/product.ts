@@ -34,10 +34,10 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	const $ = load(scrappedString);
 
 	// Scrape product details from returned html
-	const name = $('h1').text().trim();
-	const productPrice = $('[data-test=product-price]').text().trim().replaceAll(/[^\d.]/g, '');
-	const salePrice = $('[data-test=product-price-reduced]').text().trim().replaceAll(/[^\d.]/g, '');
-	const category = $('[data-test=product-sub-title]').text().trim();
+	const name = $('h1:first').text().trim();
+	const productPrice = $('[data-test=product-price]:first').text().trim().replaceAll(/[^\d.]/g, '');
+	const salePrice = $('[data-test=product-price-reduced]:first').text().trim().replaceAll(/[^\d.]/g, '');
+	const category = $('[data-test=product-sub-title]:first').text().trim();
 	const imageSource = $('#pdp_6up-hero').prop('src');
 
 	// Scrape product sizes

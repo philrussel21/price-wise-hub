@@ -181,6 +181,7 @@ const TrackButton = ({label, hasUser}: TrackButtonProperties): JSX.Element => {
 							{!isNil(product) && (
 								<div className="bg-green-300 rounded-2xl p-4">
 									<Text>{product.name}</Text>
+									<Text>{`Current Price: ${product.current_price}`}</Text>
 									<Text>Please select tracking options</Text>
 									<form className="flex flex-col gap-y-2 mt-4" onSubmit={handleTrackProduct}>
 										<div>
