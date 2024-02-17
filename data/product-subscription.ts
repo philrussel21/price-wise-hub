@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable unicorn/no-null */
 import {isNil} from 'remeda';
-import type {ProductSubscriptionQuery} from '@app/config/common-types';
 import {PRODUCT_SUBSCRIPTIONS_TABLE} from '@app/config/constants';
 import {createClient} from '@app/utils/supabase/server';
 
@@ -10,13 +9,13 @@ type TrackingOption = {
 	size: string;
 };
 
-const upsertProductSubscription = async (productId: string, trackingOption: TrackingOption, subscriptionId?: string): Promise<string | null> => {
+const upsertProductSubscription = async (productId: string, trackingOption: TrackingOption, subscriptionId?: string): Promise<string> => {
 	const supabase = createClient();
 
 	const {data: {user}} = await supabase.auth.getUser();
 
 	if (isNil(user)) {
-		return null;
+		throw new Error('Error retrieving user details');
 	}
 
 	const {data, error} = await supabase
@@ -30,14 +29,14 @@ const upsertProductSubscription = async (productId: string, trackingOption: Trac
 			is_active: true,
 		})
 		.select('id')
-		.single<ProductSubscriptionQuery>();
+		.single<{id: string}>();
 
 	if (!isNil(error)) {
-		throw new Error(`Error inserting product supscription data: ${error.message}`);
+		throw new Error(`Error upserting product supscription data: ${error.message}`);
 	}
 
 	if (isNil(data)) {
-		return data;
+		throw new Error('Error retrieving product supscription data');
 	}
 
 	return data.id;

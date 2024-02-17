@@ -2,19 +2,9 @@
 /* eslint-disable unicorn/no-null */
 import {load} from 'cheerio';
 import {isNil} from 'remeda';
-import type {PostgrestError} from '@supabase/supabase-js';
 import type {PartialProductQuery, Product, ProductQuery, ProductSize, ProductSizeQuery} from '@app/config/common-types';
 import {createClient} from '../utils/supabase/server';
 import {PRODUCTS_TABLE, STORE_URL} from '@app/config/constants';
-
-type PostgrestResponse = {
-	id: string;
-};
-
-type UpsertProductResponse = {
-	id: string | null;
-	error: PostgrestError | null;
-};
 
 const formatDatabaseResponse = (data: ProductQuery): Product => ({
 	id: data.id,
@@ -91,7 +81,7 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	};
 };
 
-const getProduct = async (id: string): Promise<Product | null> => {
+const getProduct = async (id: string): Promise<Product> => {
 	const supabase = createClient();
 
 	const {data, error} = await supabase
@@ -105,7 +95,7 @@ const getProduct = async (id: string): Promise<Product | null> => {
 	}
 
 	if (isNil(data)) {
-		return data;
+		throw new Error('Error retrieving product record');
 	}
 
 	return formatDatabaseResponse(data);
@@ -131,8 +121,7 @@ const getExistingProduct = async (url: string): Promise<Product | null> => {
 	return formatDatabaseResponse(data);
 };
 
-// TODO: update response to align with the other requests
-const upsertProduct = async (product: PartialProductQuery, productId?: string): Promise<UpsertProductResponse> => {
+const upsertProduct = async (product: PartialProductQuery, productId?: string): Promise<string> => {
 	const supabase = createClient();
 
 	const {data, error} = await supabase
@@ -142,12 +131,17 @@ const upsertProduct = async (product: PartialProductQuery, productId?: string): 
 			...product,
 		})
 		.select('id')
-		.single<PostgrestResponse>();
+		.single<{id: string}>();
 
-	return {
-		id: data?.id ?? null,
-		error,
-	};
+	if (!isNil(error)) {
+		throw new Error(`Error upserting product data: ${error.message}`);
+	}
+
+	if (isNil(data)) {
+		throw new Error('Error retrieving product subscription record id');
+	}
+
+	return data.id;
 };
 
 export {

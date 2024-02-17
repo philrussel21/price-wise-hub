@@ -3,7 +3,6 @@
 
 import {revalidatePath} from 'next/cache';
 import axios from 'axios';
-import {isNil} from 'remeda';
 import {formatProductData, getExistingProduct, isProductUrlValid, upsertProduct} from '@app/data/product';
 import type {PartialProductQuery, Product} from '@app/config/common-types';
 import type {TrackingOption} from '@app/data/product-subscription';
@@ -42,20 +41,8 @@ const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | 
 };
 
 const storeProduct = async (product: PartialProductQuery): Promise<string | null> => {
-	let id;
 	try {
-		const response = await upsertProduct(product);
-
-		if (!isNil(response.error)) {
-			throw new Error(response.error.message);
-		}
-
-		// Unlikely scenario when there's no data and no error
-		if (isNil(response.id)) {
-			throw new Error('No id returned');
-		}
-
-		id = response.id;
+		const id = await upsertProduct(product);
 		revalidatePath(`/products/${id}`, 'page');
 
 		return id;
@@ -79,6 +66,7 @@ const checkDuplicateProduct = async (url: string): Promise<Product | null> => {
 const subscribeToProduct = async (productId: string, trackingOption: TrackingOption, productSubscriptionId?: string): Promise<string | null> => {
 	try {
 		return await upsertProductSubscription(productId, trackingOption, productSubscriptionId);
+		// TODO: revalidate path where users can see the products they're subscribed to
 	} catch (error) {
 		console.log(error);
 
