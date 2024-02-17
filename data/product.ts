@@ -30,6 +30,7 @@ const isProductUrlValid = (urlString: string): boolean => {
 };
 
 const formatProductData = async (scrappedString: string, productUrl: string, previousProduct?: Product): Promise<PartialProductQuery> => {
+	// TODO: handle launch url differently
 	const $ = load(scrappedString);
 
 	// Scrape product details from returned html
@@ -40,8 +41,12 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	const imageSource = $('#pdp_6up-hero').prop('src');
 
 	// Scrape product sizes
-	const dataString = scrappedString.split('"skus":').at(-1) ?? '';
-
+	const styleId = productUrl.split('/').at(-1) ?? '';
+	const dataStringArray = scrappedString.split(`"${styleId}":`);
+	const stringContainingId = dataStringArray.find(string => string.startsWith('{"id":"'));
+	// Get product uuid eg. 11fc6f77-c2f7-54ee-998f-caabde6d5ade
+	const productId = stringContainingId?.slice(7, 43) ?? '';
+	const dataString = scrappedString.split('"skus":').find(string => string.includes(`"productId":"${productId}"`)) ?? '';
 	const sizesArrayString = dataString.split(',"title"').at(0) ?? '';
 	const sizesJson = await JSON.parse(sizesArrayString) as ProductSizeQuery[];
 	const sizeSkuIds = sizesJson.map(size => ({
