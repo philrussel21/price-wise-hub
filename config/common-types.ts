@@ -41,6 +41,24 @@ type ProductSizeQuery = {
 	nikeSize: string;
 };
 
+type ProductSubscription = {
+	id: string;
+	productId: string;
+	isTrackingPrice: boolean;
+	size: string;
+	isActive: boolean;
+};
+
+type ProductSubscriptionQuery = {
+	id: string;
+	product_id: string;
+	is_tracking_price: boolean;
+	size: string;
+	is_active: boolean;
+};
+
+type PartialProductSubscriptionQuery = Omit<ProductSubscriptionQuery, 'id'>;
+
 export type {
 	Parameters as Params,
 	Product,
@@ -48,4 +66,7 @@ export type {
 	ProductQuery,
 	ProductSizeQuery,
 	PartialProductQuery,
+	ProductSubscription,
+	ProductSubscriptionQuery,
+	PartialProductSubscriptionQuery,
 };

@@ -3,12 +3,13 @@
 
 import type {ChangeEvent, FormEvent} from 'react';
 import {Fragment, useCallback, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {Dialog} from '@headlessui/react';
 import {isNil} from 'remeda';
 import {Button, Heading, Text} from '@app/components';
 import {XMarkIcon} from '@heroicons/react/24/solid';
 import {isProductUrlValid} from '@app/data/product';
-import {checkDuplicateProduct, scrapeProduct, storeProduct} from '@app/utils/actions/track';
+import {checkDuplicateProduct, scrapeProduct, storeProduct, subscribeToProduct} from '@app/utils/actions/track';
 import type {PartialProductQuery, Product} from '@app/config/common-types';
 
 type TrackButtonProperties = {
@@ -29,6 +30,7 @@ const initialTrackingOptions: TrackingOptionsState = {
 const ERROR_MESSAGE = 'Unsupported store link. Please provide a valid link.';
 
 const TrackButton = ({label, hasUser}: TrackButtonProperties): JSX.Element => {
+	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [url, setUrl] = useState('');
 	const [hasError, setHasError] = useState(false);
@@ -44,8 +46,9 @@ const TrackButton = ({label, hasUser}: TrackButtonProperties): JSX.Element => {
 		setUrl('');
 		setHasError(false);
 		setExistingProduct(null);
-		setIsModalOpen(false);
 		setProduct(null);
+		setTrackingOptions(initialTrackingOptions);
+		setIsModalOpen(false);
 	}, []);
 
 	const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -105,15 +108,22 @@ const TrackButton = ({label, hasUser}: TrackButtonProperties): JSX.Element => {
 			return;
 		}
 
-		const id = await storeProduct(product);
+		const productId = await storeProduct(product);
 
-		if (isNil(id)) {
+		if (isNil(productId)) {
 			// TODO: error when storing the product
 			return;
 		}
 
-		// TODO: subscribe user to product changes based on tracking options
-	}, [product]);
+		const productSubscriptionId = await subscribeToProduct(productId, trackingOptions);
+
+		if (isNil(productSubscriptionId)) {
+			// TODO: error when user subscribing to product
+			return;
+		}
+
+		router.push(`/products/${productId}`);
+	}, [product, trackingOptions]);
 
 	return (
 		<Fragment>

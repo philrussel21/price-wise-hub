@@ -6,6 +6,8 @@ import axios from 'axios';
 import {isNil} from 'remeda';
 import {formatProductData, getExistingProduct, isProductUrlValid, upsertProduct} from '@app/data/product';
 import type {PartialProductQuery, Product} from '@app/config/common-types';
+import type {TrackingOption} from '@app/data/product-subscription';
+import {upsertProductSubscription} from '@app/data/product-subscription';
 
 const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | null> => {
 	if (!isProductUrlValid(productUrl)) {
@@ -59,20 +61,27 @@ const storeProduct = async (product: PartialProductQuery): Promise<string | null
 		return id;
 	} catch (error) {
 		console.log(error);
-		
+
 		return null;
 	}
 };
 
 const checkDuplicateProduct = async (url: string): Promise<Product | null> => {
 	try {
-		const duplicate = await getExistingProduct(url);
-
-		return duplicate;
+		return await getExistingProduct(url);
 	} catch (error: unknown) {
 		console.log(error);
 
-		// eslint-disable-next-line unicorn/no-null
+		return null;
+	}
+};
+
+const subscribeToProduct = async (productId: string, trackingOption: TrackingOption, productSubscriptionId?: string): Promise<string | null> => {
+	try {
+		return await upsertProductSubscription(productId, trackingOption, productSubscriptionId);
+	} catch (error) {
+		console.log(error);
+
 		return null;
 	}
 };
@@ -81,4 +90,5 @@ export {
 	scrapeProduct,
 	storeProduct,
 	checkDuplicateProduct,
+	subscribeToProduct,
 };
