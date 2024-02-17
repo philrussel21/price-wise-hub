@@ -1,15 +1,15 @@
+/* eslint-disable unicorn/no-null */
 'use server';
 
 import {revalidatePath} from 'next/cache';
-import {redirect} from 'next/navigation';
 import axios from 'axios';
 import {isNil} from 'remeda';
 import {formatProductData, getExistingProduct, isProductUrlValid, upsertProduct} from '@app/data/product';
-import type {Product} from '@app/config/common-types';
+import type {PartialProductQuery, Product} from '@app/config/common-types';
 
-const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
+const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | null> => {
 	if (!isProductUrlValid(productUrl)) {
-		return;
+		return null;
 	}
 
 	// Bright Data proxy configuration
@@ -27,13 +27,22 @@ const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 		port,
 		rejectUnauthorized: false,
 	};
-	let id;
 
 	try {
 		const {data} = await axios.get<string>(productUrl, options);
 
-		const formattedProduct = await formatProductData(data, productUrl);
-		const response = await upsertProduct(formattedProduct);
+		return await formatProductData(data, productUrl);
+	} catch (error: unknown) {
+		console.log(error);
+
+		return null;
+	}
+};
+
+const storeProduct = async (product: PartialProductQuery): Promise<string | null> => {
+	let id;
+	try {
+		const response = await upsertProduct(product);
 
 		if (!isNil(response.error)) {
 			throw new Error(response.error.message);
@@ -45,14 +54,13 @@ const scrapeAndStoreProduct = async (productUrl: string): Promise<void> => {
 		}
 
 		id = response.id;
-	} catch (error: unknown) {
-		console.log(error);
-	} finally {
-		if (isNil(id)) {
-			redirect('/');
-		}
 		revalidatePath(`/products/${id}`, 'page');
-		redirect(`/products/${id}`);
+
+		return id;
+	} catch (error) {
+		console.log(error);
+		
+		return null;
 	}
 };
 
@@ -70,6 +78,7 @@ const checkDuplicateProduct = async (url: string): Promise<Product | null> => {
 };
 
 export {
-	scrapeAndStoreProduct,
+	scrapeProduct,
+	storeProduct,
 	checkDuplicateProduct,
 };

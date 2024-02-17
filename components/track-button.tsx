@@ -8,22 +8,33 @@ import {isNil} from 'remeda';
 import {Button, Heading, Text} from '@app/components';
 import {XMarkIcon} from '@heroicons/react/24/solid';
 import {isProductUrlValid} from '@app/data/product';
-import {checkDuplicateProduct, scrapeAndStoreProduct} from '@app/utils/actions/track';
-import type {Product} from '@app/config/common-types';
+import {checkDuplicateProduct, scrapeProduct, storeProduct} from '@app/utils/actions/track';
+import type {PartialProductQuery, Product} from '@app/config/common-types';
 
 type TrackButtonProperties = {
 	hasUser: boolean;
 	label: string;
-	productId?: string;
+};
+
+type TrackingOptionsState = {
+	isTrackingPrice: boolean;
+	size: string;
+};
+
+const initialTrackingOptions: TrackingOptionsState = {
+	isTrackingPrice: false,
+	size: '',
 };
 
 const ERROR_MESSAGE = 'Unsupported store link. Please provide a valid link.';
 
-const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.Element => {
+const TrackButton = ({label, hasUser}: TrackButtonProperties): JSX.Element => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [url, setUrl] = useState('');
 	const [hasError, setHasError] = useState(false);
 	const [existingProduct, setExistingProduct] = useState<Product | null>(null);
+	const [trackingOptions, setTrackingOptions] = useState<TrackingOptionsState>(initialTrackingOptions);
+	const [product, setProduct] = useState<PartialProductQuery | null>(null);
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true);
@@ -34,14 +45,28 @@ const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.El
 		setHasError(false);
 		setExistingProduct(null);
 		setIsModalOpen(false);
+		setProduct(null);
 	}, []);
 
 	const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-		const value = event.target.value;
-		setUrl(value);
+		setUrl(event.target.value);
 	}, []);
 
-	const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+	const handleCheckboxChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+		setTrackingOptions(current => ({
+			...current,
+			isTrackingPrice: event.target.checked,
+		}));
+	}, []);
+
+	const handleSelectChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+		setTrackingOptions(current => ({
+			...current,
+			size: event.target.value,
+		}));
+	}, []);
+
+	const handleSelectProductSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setExistingProduct(null);
 
@@ -63,33 +88,57 @@ const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.El
 			return;
 		}
 
-		await scrapeAndStoreProduct(url);
+		const scrapedProduct = await scrapeProduct(url);
+
+		if (isNil(scrapedProduct)) {
+			// TODO: error when scraping the product
+			return;
+		}
+
+		setProduct(scrapedProduct);
 	}, [url, hasUser]);
 
-	if (isNil(productId)) {
-		return (
-			<Fragment>
-				<Button.Semantic label={label} onClick={handleOpenModal}/>
-				<Dialog
-					open={isModalOpen}
-					className="relative z-50"
-					onClose={handleCloseModal}
-				>
-					<div className="fixed inset-0 bg-black/30" aria-hidden="true"/>
-					<div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-						<Dialog.Panel className="bg-white p-6 rounded-2xl relative w-96">
-							<button type="button" className="absolute top-0 right-0 -translate-x-1/2 translate-y-1/2" onClick={handleCloseModal}>
-								<XMarkIcon className="w-6"/>
-							</button>
-							<Dialog.Title>
-								<Heading variant="heading-three" label="Track Product Price"/>
-							</Dialog.Title>
-							<Dialog.Description as="div">
+	const handleTrackProduct = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		if (isNil(product)) {
+			return;
+		}
+
+		const id = await storeProduct(product);
+
+		if (isNil(id)) {
+			// TODO: error when storing the product
+			return;
+		}
+
+		// TODO: subscribe user to product changes based on tracking options
+	}, [product]);
+
+	return (
+		<Fragment>
+			<Button.Semantic label={label} onClick={handleOpenModal}/>
+			<Dialog
+				open={isModalOpen}
+				className="relative z-50"
+				onClose={handleCloseModal}
+			>
+				<div className="fixed inset-0 bg-black/30" aria-hidden="true"/>
+				<div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+					<Dialog.Panel className="bg-white p-6 rounded-2xl relative w-96">
+						<button type="button" className="absolute top-0 right-0 -translate-x-1/2 translate-y-1/2" onClick={handleCloseModal}>
+							<XMarkIcon className="w-6"/>
+						</button>
+						<Dialog.Title>
+							<Heading variant="heading-three" label="Track Product Price"/>
+						</Dialog.Title>
+						<Dialog.Description as="div">
+							{isNil(product) && (
 								<div className="flex flex-col gap-y-4">
 									<Text>
 										Enter the url of product you&apos;d like to track
 									</Text>
-									<form className="flex flex-col gap-y-4 items-center" onSubmit={handleSubmit}>
+									<form className="flex flex-col gap-y-4 items-center" onSubmit={handleSelectProductSubmit}>
 										<label htmlFor="url" className="sr-only">URL</label>
 										<input
 											required
@@ -100,7 +149,7 @@ const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.El
 											value={url}
 											onChange={handleInputChange}
 										/>
-										<Button.Semantic disabled={!hasUser} type="submit" label="Track price"/>
+										<Button.Semantic disabled={!hasUser} type="submit" label="Select Product"/>
 									</form>
 									{hasError && (
 										<Text className="p-4 bg-red-300 rounded-2xl">{ERROR_MESSAGE}</Text>
@@ -118,17 +167,34 @@ const TrackButton = ({productId, label, hasUser}: TrackButtonProperties): JSX.El
 										<Text>{existingProduct.name}</Text>
 									)}
 								</div>
-							</Dialog.Description>
-						</Dialog.Panel>
-					</div>
-				</Dialog>
-			</Fragment>
-		);
-	}
-
-	return (
-		// TODO: Add current product ID to user's tracked products
-		<Button.Semantic label={label}/>
+							)}
+							{!isNil(product) && (
+								<div className="bg-green-300 rounded-2xl p-4">
+									<Text>{product.name}</Text>
+									<Text>Please select tracking options</Text>
+									<form className="flex flex-col gap-y-2 mt-4" onSubmit={handleTrackProduct}>
+										<div>
+											<input id="isTrackingPrice" type="checkbox" checked={trackingOptions.isTrackingPrice} onChange={handleCheckboxChange}/>
+											<label htmlFor="isTrackingPrice">Price change</label>
+										</div>
+										<div>
+											<label htmlFor="sizes">Sizes</label>
+											<select required id="sizes" value={trackingOptions.size} onChange={handleSelectChange}>
+												<option disabled value="">Select an option</option>
+												{product.sizes.map(size => (
+													<option key={size.label} value={size.label}>{size.label}</option>
+												))}
+											</select>
+										</div>
+										<Button.Semantic disabled={!hasUser} type="submit" label="Track Product"/>
+									</form>
+								</div>
+							)}
+						</Dialog.Description>
+					</Dialog.Panel>
+				</div>
+			</Dialog>
+		</Fragment>
 	);
 };
 
