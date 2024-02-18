@@ -66,8 +66,6 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 		isAvailable: occurrences.filter(match => match === sizeItem.skuId).length > 1,
 	}));
 
-	// TODO: Check if there's been any changes with the previousProduct and new product details
-	// prior to updating the DB.
 	const isOnSale = salePrice !== '';
 	const currentPrice = isOnSale ? Number.parseFloat(salePrice) : Number.parseFloat(productPrice);
 	const lowestPrice = isNil(previousProduct) || previousProduct.lowestPrice > currentPrice ? currentPrice : previousProduct.lowestPrice;
@@ -84,6 +82,25 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 		url: productUrl,
 		is_on_sale: isOnSale,
 	};
+};
+
+const getAllProducts = async (): Promise<Product[]> => {
+	const supabase = createClient();
+
+	const {data, error} = await supabase
+		.from(PRODUCTS_TABLE)
+		.select()
+		.returns<ProductQuery[]>();
+
+	if (!isNil(error)) {
+		throw new Error(`Error getting the product: ${error.message}`);
+	}
+
+	if (isNil(data)) {
+		throw new Error('Error retrieving products');
+	}
+
+	return data.map(product => formatDatabaseResponse(product));
 };
 
 const getProduct = async (id: string): Promise<Product> => {
@@ -155,4 +172,5 @@ export {
 	upsertProduct,
 	getProduct,
 	getExistingProduct,
+	getAllProducts,
 };

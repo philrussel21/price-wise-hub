@@ -8,7 +8,7 @@ import type {PartialProductQuery, Product} from '@app/config/common-types';
 import type {TrackingOption} from '@app/data/product-subscription';
 import {upsertProductSubscription} from '@app/data/product-subscription';
 
-const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | null> => {
+const scrapeProduct = async (productUrl: string, previousProduct?: Product): Promise<PartialProductQuery | null> => {
 	if (!isProductUrlValid(productUrl)) {
 		return null;
 	}
@@ -32,7 +32,7 @@ const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | 
 	try {
 		const {data} = await axios.get<string>(productUrl, options);
 
-		return await formatProductData(data, productUrl);
+		return await formatProductData(data, productUrl, previousProduct);
 	} catch (error: unknown) {
 		console.log(error);
 
@@ -40,9 +40,9 @@ const scrapeProduct = async (productUrl: string): Promise<PartialProductQuery | 
 	}
 };
 
-const storeProduct = async (product: PartialProductQuery): Promise<string | null> => {
+const storeProduct = async (product: PartialProductQuery, productId?: string): Promise<string | null> => {
 	try {
-		const id = await upsertProduct(product);
+		const id = await upsertProduct(product, productId);
 		revalidatePath(`/products/${id}`, 'page');
 
 		return id;
