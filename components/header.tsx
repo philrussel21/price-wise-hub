@@ -14,15 +14,15 @@ const canInitSupabaseClient = (): boolean => {
 	}
 };
 
-const Header = async (): Promise<JSX.Element> => {
-	const isSupabaseConnected = await canInitSupabaseClient();
+const Header = (): JSX.Element => {
+	const isSupabaseConnected = canInitSupabaseClient();
 
 	return (
 		<header>
 			<nav className="w-full flex justify-center border-b h-16">
 				<div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
 					<Link href="/">
-						Price Wise Hub Logo
+						SneakAlert Logo
 					</Link>
 					{isSupabaseConnected && <AuthButton/>}
 				</div>

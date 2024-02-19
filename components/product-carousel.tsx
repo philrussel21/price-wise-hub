@@ -10,10 +10,10 @@ type ProductSlide = {
 };
 
 type ProductCarouselProperties = {
-	products: ProductSlide[];
+	productSlides: ProductSlide[];
 };
 
-const ProductCarousel = ({products}: ProductCarouselProperties): JSX.Element => (
+const ProductCarousel = ({productSlides}: ProductCarouselProperties): JSX.Element => (
 	<Carousel
 		// TODO: uncomment on launch
 		// autoPlay
@@ -22,7 +22,7 @@ const ProductCarousel = ({products}: ProductCarouselProperties): JSX.Element => 
 		showThumbs={false}
 		showArrows={false}
 	>
-		{products.map(product => (
+		{productSlides.map(product => (
 			<div key={product.alt}>
 				<Image
 					width={600}

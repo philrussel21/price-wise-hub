@@ -85,12 +85,13 @@ const formatProductData = async (scrappedString: string, productUrl: string, pre
 	};
 };
 
-const getAllProducts = async (): Promise<Product[]> => {
+const getAllProducts = async (limit = 1000): Promise<Product[]> => {
 	const supabase = createClient();
 
 	const {data, error} = await supabase
 		.from(PRODUCTS_TABLE)
 		.select()
+		.limit(limit)
 		.returns<ProductQuery[]>();
 
 	if (!isNil(error)) {
