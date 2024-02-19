@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable unicorn/no-null */
 import type {PartialProductQuery, Product, ProductQuery, ProductSize} from '@app/config/common-types';
+import routes from '@app/config/routes';
 import {getAllProducts, upsertProduct} from '@app/data/product';
 import {getProductSubscriptionsById} from '@app/data/product-subscription';
 import {scrapeProduct} from '@app/utils/actions/track';
+import {revalidatePath} from 'next/cache';
 import {NextResponse} from 'next/server';
 import {differenceWith, isEmpty, isNil, equals} from 'remeda';
 
@@ -72,8 +74,13 @@ export const GET = async (request: Request): Promise<NextResponse> => {
 			return NextResponse.json({message: 'Success'}, {status: 200});
 		}
 
-		// update db with new product details
-		await Promise.all(productsToUpdate.map(async (updatedProduct) => await upsertProduct(updatedProduct.product, updatedProduct.product.id)));
+		// revalidate page and update db with new product details
+		await Promise.all(productsToUpdate.map(async (updatedProduct) => {
+			revalidatePath(`${routes.products}/${updatedProduct.product.id}`, 'page');
+
+			return await upsertProduct(updatedProduct.product, updatedProduct.product.id);
+		},
+		));
 
 		// Get all active product subscriptions via the list of updated products
 		const allProductSubscriptionsArrays = await Promise.all(productsToUpdate.map(async (product) => await getProductSubscriptionsById(product.product.id)));

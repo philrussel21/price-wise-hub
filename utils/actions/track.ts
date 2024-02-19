@@ -7,6 +7,7 @@ import {formatProductData, getExistingProduct, isProductUrlValid, upsertProduct}
 import type {PartialProductQuery, Product} from '@app/config/common-types';
 import type {TrackingOption} from '@app/data/product-subscription';
 import {upsertProductSubscription} from '@app/data/product-subscription';
+import routes from '@app/config/routes';
 
 const scrapeProduct = async (productUrl: string, previousProduct?: Product): Promise<PartialProductQuery | null> => {
 	if (!isProductUrlValid(productUrl)) {
@@ -43,7 +44,7 @@ const scrapeProduct = async (productUrl: string, previousProduct?: Product): Pro
 const storeProduct = async (product: PartialProductQuery, productId?: string): Promise<string | null> => {
 	try {
 		const id = await upsertProduct(product, productId);
-		revalidatePath(`/products/${id}`, 'page');
+		revalidatePath(`${routes.products}/${id}`, 'page');
 
 		return id;
 	} catch (error) {
