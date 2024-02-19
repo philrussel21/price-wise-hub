@@ -2,36 +2,15 @@
 /* eslint-disable unicorn/no-null */
 import type {PartialProductQuery, Product, ProductQuery, ProductSize} from '@app/config/common-types';
 import {getAllProducts, upsertProduct} from '@app/data/product';
+import {getProductSubscriptionsById} from '@app/data/product-subscription';
 import {scrapeProduct} from '@app/utils/actions/track';
 import {NextResponse} from 'next/server';
-import {isNil} from 'remeda';
+import {differenceWith, isEmpty, isNil, equals} from 'remeda';
 
 type ProductUpdateType = {
 	hasPriceChanged: boolean;
-	hasSizesChanged: boolean;
+	updatedSizes: ProductSize[];
 	product: ProductQuery;
-};
-
-const hasDifferentSizes = (oldSizes: ProductSize[], newSizes: ProductSize[]): boolean => {
-	if (oldSizes.length !== newSizes.length) {
-		return true;
-	}
-
-	// eslint-disable-next-line unicorn/no-for-loop
-	for (let index = 0; index < oldSizes.length; index++) {
-		const oldSize = oldSizes[index];
-		const newSize = newSizes[index];
-
-		if (oldSize.isAvailable !== newSize.isAvailable) {
-			return true;
-		}
-
-		if (oldSize.label !== newSize.label) {
-			return true;
-		}
-	}
-
-	return false;
 };
 
 const generateProductsToUpdate = (previousData: Product[], newData: PartialProductQuery[]): ProductUpdateType[] => {
@@ -39,7 +18,6 @@ const generateProductsToUpdate = (previousData: Product[], newData: PartialProdu
 
 	for (const product of newData) {
 		let hasPriceChanged = false;
-		let hasSizesChanged = false;
 		const oldProductDetails = previousData.find(details => details.url === product.url);
 
 		if (isNil(oldProductDetails)) {
@@ -53,15 +31,15 @@ const generateProductsToUpdate = (previousData: Product[], newData: PartialProdu
 			hasPriceChanged = true;
 		}
 
-		hasSizesChanged = hasDifferentSizes(oldProductDetails.sizes, product.sizes);
+		const updatedSizes = differenceWith(oldProductDetails.sizes, product.sizes, equals);
 
-		if (!hasPriceChanged && !hasSizesChanged) {
+		if (!hasPriceChanged && isEmpty(updatedSizes)) {
 			continue;
 		}
 
 		const updatedProduct = {
 			hasPriceChanged,
-			hasSizesChanged,
+			updatedSizes,
 			product: {
 				id: oldProductDetails.id,
 				...product,
@@ -89,16 +67,45 @@ export const GET = async (request: Request): Promise<NextResponse> => {
 
 		const productsToUpdate = generateProductsToUpdate(allProducts, allValidScrapes);
 
+		// Exit early if there's no need to update the db nor send notifications
+		if (isEmpty(productsToUpdate)) {
+			return NextResponse.json({message: 'Success'}, {status: 200});
+		}
+
 		// update db with new product details
 		await Promise.all(productsToUpdate.map(async (updatedProduct) => await upsertProduct(updatedProduct.product, updatedProduct.product.id)));
 
-		// TODO: send emails to subscribed user based on their subscription type
+		// Get all active product subscriptions via the list of updated products
+		const allProductSubscriptionsArrays = await Promise.all(productsToUpdate.map(async (product) => await getProductSubscriptionsById(product.product.id)));
+		const allProductSubscriptions = allProductSubscriptionsArrays.flat();
+
+		// For each change in the product subscription record, send a notification based on user subscription type and property changed from the product update
+		for (const productSubscription of allProductSubscriptions) {
+			const updatedProduct = productsToUpdate.find(product => product.product.id === productSubscription.productId);
+
+			// Unlikely scenario when a updated product is not in the list of product subscriptions to update
+			if (isNil(updatedProduct)) {
+				throw new Error(`Could not locate product ${productSubscription.id} from the list of updated products`);
+			}
+
+			const updatedSizesLabels = updatedProduct.updatedSizes.map(size => size.label);
+
+			// TODO: replace with actual send email notification
+			if (!isEmpty(updatedSizesLabels) && updatedSizesLabels.includes(productSubscription.size)) {
+				// Send notification about product size availability based on chosen size
+				console.log('Send notification about selected size availability');
+			}
+
+			// TODO: replace with actual send email notification
+			if (updatedProduct.hasPriceChanged && updatedProduct.product.is_on_sale && productSubscription.isTrackingPrice) {
+				console.log('Send notification about product sale');
+			}
+		}
 	} catch (error: unknown) {
 		console.log(error);
 
 		return NextResponse.json({error}, {status: 500});
 	}
 
-	// URL to redirect to after sign in process completes
 	return NextResponse.json({message: 'Success'}, {status: 200});
 };

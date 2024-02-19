@@ -44,6 +44,7 @@ type ProductSizeQuery = {
 type ProductSubscription = {
 	id: string;
 	productId: string;
+	userEmail: string;
 	isTrackingPrice: boolean;
 	size: string;
 	isActive: boolean;
@@ -55,6 +56,10 @@ type ProductSubscriptionQuery = {
 	is_tracking_price: boolean;
 	size: string;
 	is_active: boolean;
+};
+
+type UserQuery = {
+	email: string;
 };
 
 type PartialProductSubscriptionQuery = Omit<ProductSubscriptionQuery, 'id'>;
@@ -69,4 +74,5 @@ export type {
 	ProductSubscription,
 	ProductSubscriptionQuery,
 	PartialProductSubscriptionQuery,
+	UserQuery,
 };
