@@ -13,7 +13,7 @@ export const metadata = {
 const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
 	<html lang="en">
 		<body className="antialiased">
-			<main className="pb-16 md:pb-24">
+			<main>
 				<Header/>
 				{children}
 			</main>

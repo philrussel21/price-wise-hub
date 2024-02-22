@@ -42,3 +42,20 @@
 .text-small {
 	@apply text-sm;
 }
+
+/* React Responsive Carousel */
+.carousel-root {
+	height: 100%;
+}
+
+.carousel.carousel-slider {
+	height: 100%;
+}
+
+.slider-wrapper.axis-horizontal {
+	height: 100% !important;
+}
+
+.slider.animated {
+	height: 100%;
+}
