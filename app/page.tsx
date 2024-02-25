@@ -29,7 +29,7 @@ const Index = async (): Promise<JSX.Element> => {
 		<Region className="!mt-10">
 			<Container className="grid grid-cols-4 grid-rows-4 gap-7">
 				<div className="shadow-md border-red-300/40 border min-h-44 rounded-2xl">
-					<Link href="/" className="flex justify-center items-center p-8 h-full hover:underline">
+					<Link href={routes.about} className="flex justify-center items-center p-8 h-full hover:underline">
 						<Heading variant="heading-one" label="How to use"/>
 					</Link>
 				</div>
@@ -39,7 +39,7 @@ const Index = async (): Promise<JSX.Element> => {
 					</Link>
 				</div>
 				<div className="shadow-md border-red-300/40 border min-h-44 rounded-2xl">
-					<Link href="/" className="flex justify-center items-center p-8 h-full hover:underline">
+					<Link href={routes.contact} className="flex justify-center items-center p-8 h-full hover:underline">
 						<Heading variant="heading-one" label="Contact us"/>
 					</Link>
 				</div>
