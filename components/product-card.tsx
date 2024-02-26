@@ -12,7 +12,7 @@ type ProductCardProperties = {
 };
 
 const ProductCard = ({imageSrc, name, lowestPrice, highestPrice, currentPrice, url, isOnSale}: ProductCardProperties): JSX.Element => (
-	<article className="flex gap-x-8 shadow-2xl rounded-2xl overflow-hidden">
+	<article className="flex gap-x-8 shadow-2xl rounded-2xl overflow-hidden bg-black text-white">
 		<Image
 			width={600}
 			height={400}
