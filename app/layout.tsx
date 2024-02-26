@@ -1,5 +1,5 @@
-import {Header} from '@app/components';
 import {Open_Sans, Oswald} from 'next/font/google';
+import {Header, ProgressBar} from '@app/components';
 import './globals.css';
 
 type RootLayoutProperties = {
@@ -26,10 +26,12 @@ const oswald = Oswald({
 const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
 	<html lang="en">
 		<body className="antialiased">
-			<main className={`${oswald.variable} ${openSans.variable} font-sans`}>
-				<Header/>
-				{children}
-			</main>
+			<ProgressBar>
+				<main className={`${oswald.variable} ${openSans.variable} font-sans`}>
+					<Header/>
+					{children}
+				</main>
+			</ProgressBar>
 		</body>
 	</html>
 );
