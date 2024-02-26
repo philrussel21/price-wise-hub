@@ -3,28 +3,28 @@
 @tailwind utilities;
 
 .headline {
-	@apply text-4xl md:text-[56px] md:leading-[64px];
+	@apply text-4xl md:text-[56px] md:leading-[64px] font-sansSerif;
 }
 
 .heading-one {
-	@apply text-[28px] leading-[30px] md:text-[40px] md:leading-[48px] font-semibold tracking-[0.25px];
+	@apply text-[28px] leading-[30px] md:text-[40px] md:leading-[48px] font-semibold tracking-[0.25px] font-sansSerif;
 }
 
 .heading-two {
-	@apply text-[22px] leading-8 md:text-[30px] md:leading-10 tracking-[0.25px] font-semibold;
+	@apply text-[22px] leading-8 md:text-[30px] md:leading-10 tracking-[0.25px] font-semibold font-sansSerif;
 }
 
 .heading-three,
 .heading-four {
-	@apply text-xl leading-6 md:text-[22px] md:leading-8 tracking-[0.25px] font-semibold;
+	@apply text-xl leading-6 md:text-[22px] md:leading-8 tracking-[0.25px] font-semibold font-sansSerif;
 }
 
 .heading-five {
-	@apply text-lg leading-6 font-medium;
+	@apply text-lg leading-6 font-medium font-sansSerif;
 }
 
 .heading-six {
-	@apply text-base leading-5;
+	@apply text-base leading-5 font-sansSerif;
 }
 
 .subheading {

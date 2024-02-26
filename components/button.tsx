@@ -8,7 +8,7 @@ type BaseButtonProperties = {
 };
 
 const variantClasses: Record<Variant, string> = {
-	primary: 'bg-brand-primary hover:bg-brand-secondary hover:text-white',
+	primary: 'bg-brand-primary hover:bg-brand-secondary hover:text-white text-white',
 	secondary: 'bg-brand-secondary hover:bg-brand-primary text-white hover:text-black',
 };
 

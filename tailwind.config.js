@@ -21,9 +21,13 @@ module.exports = {
 					xl: '1280px',
 				},
 			},
+			fontFamily: {
+				sans: ['var(--font-sans)'],
+				sansSerif: ['var(--font-sans-serif)'],
+			},
 			colors: {
-				'brand-primary': '#d1d5db',
-				'brand-secondary': '#1f2937',
+				'brand-primary': '#e63946',
+				'brand-secondary': '#000',
 			},
 		},
 	},
