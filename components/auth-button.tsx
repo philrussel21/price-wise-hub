@@ -1,7 +1,8 @@
 import {signOut} from '@app/utils/actions/auth';
 import {createClient} from '@app/utils/supabase/server';
-import Link from 'next/link';
 import {Fragment} from 'react';
+import Button from './button';
+import routes from '@app/config/routes';
 
 const AuthButton = async (): Promise<JSX.Element> => {
 	const supabase = createClient();
@@ -13,25 +14,12 @@ const AuthButton = async (): Promise<JSX.Element> => {
 	return (
 		<Fragment>
 			{user === null && (
-				<Link
-					href="/login"
-					className="py-2 px-3 flex rounded-md no-underline bg-brand-primary hover:bg-brand-secondary"
-				>
-					Login
-				</Link>
+				<Button.Link href={routes.login} label="Login" className="px-6 bg-green-500"/>
 			)}
 			{user !== null && (
 				<div className="flex items-center gap-4">
-					<Link
-						href="/profile"
-						className="py-2 px-3 flex rounded-md no-underline bg-brand-primary hover:bg-brand-secondary"
-					>
-						Profile
-					</Link>
 					<form action={signOut}>
-						<button type="submit" className="py-2 px-4 rounded-md no-underline bg-brand-primary hover:bg-brand-secondary">
-							Logout
-						</button>
+						<Button.Semantic type="submit" label="Logout" className="px-6"/>
 					</form>
 				</div>
 			)}

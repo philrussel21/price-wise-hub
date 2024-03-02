@@ -1,4 +1,4 @@
-import {AuthButton} from '@app/components';
+import {AuthButton, Heading} from '@app/components';
 import {createClient} from '@app/utils/supabase/server';
 import Link from 'next/link';
 
@@ -22,7 +22,7 @@ const Header = (): JSX.Element => {
 			<nav className="w-full flex justify-center border-b h-16">
 				<div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
 					<Link href="/">
-						SneakAlert Logo
+						<Heading variant="heading-two" label="SneakAlert"/>
 					</Link>
 					{isSupabaseConnected && <AuthButton/>}
 				</div>

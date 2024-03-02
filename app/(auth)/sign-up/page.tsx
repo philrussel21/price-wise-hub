@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import {Container, Region} from '@app/components';
+import {Button, Container, Region} from '@app/components';
 import {signUp} from '@app/utils/actions/auth';
+import routes from '@app/config/routes';
 
 type SignUpPageProperties = {
 	searchParams: {
@@ -56,16 +57,11 @@ const SignUpPage = ({searchParams}: SignUpPageProperties): JSX.Element => {
 						name="password"
 						placeholder="••••••••"
 					/>
-					<button
-						type="submit"
-						className="border border-foreground/20 rounded-md px-4 py- mb-2"
-					>
-						Sign Up
-					</button>
-					<p className="text-sm">
+					<Button.Semantic type="submit" label="Sign Up" className="bg-green-500"/>
+					<p className="text-sm mt-4">
 						Already have an account?
 						{' '}
-						<Link href="/login" className="underline hover:no-underline">Log in</Link>
+						<Link href={routes.login} className="underline hover:no-underline">Log in</Link>
 						{' '}
 						instead
 					</p>

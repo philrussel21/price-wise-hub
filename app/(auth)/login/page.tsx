@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import {Container, Region} from '@app/components';
+import {Button, Container, Region} from '@app/components';
 import {signIn} from '@app/utils/actions/auth';
+import routes from '@app/config/routes';
 
 type LoginPageProperties = {
 	searchParams: {
@@ -31,7 +32,7 @@ const LoginPage = ({searchParams}: LoginPageProperties): JSX.Element => {
 						<polyline points="15 18 9 12 15 6"/>
 					</svg>
 					{' '}
-				Back
+				Back to Home
 				</Link>
 				<form
 					className="flex-1 flex flex-col w-full justify-center"
@@ -56,13 +57,11 @@ const LoginPage = ({searchParams}: LoginPageProperties): JSX.Element => {
 						name="password"
 						placeholder="••••••••"
 					/>
-					<button type="submit" className="bg-green-700 rounded-md px-4 py- mb-2">
-					Sign In
-					</button>
-					<p className="text-sm">
+					<Button.Semantic type="submit" label="Sign In" className="bg-green-500"/>
+					<p className="text-sm mt-4">
 Don&apos;t have an account?
 						{' '}
-						<Link href="/sign-up" className="underline hover:no-underline">Sign up</Link>
+						<Link href={routes.signUp} className="underline hover:no-underline">Sign up</Link>
 						{' '}
 instead
 					</p>
