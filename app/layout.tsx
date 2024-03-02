@@ -28,10 +28,10 @@ const oswald = Oswald({
 const dynamic = 'force-dynamic';
 
 const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
-	<html lang="en">
+	<html lang="en" className={`${oswald.variable} ${openSans.variable} font-sans`}>
 		<body className="antialiased">
 			<ProgressBar>
-				<main className={`${oswald.variable} ${openSans.variable} font-sans`}>
+				<main>
 					<Header/>
 					{children}
 				</main>

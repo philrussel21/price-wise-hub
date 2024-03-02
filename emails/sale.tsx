@@ -50,7 +50,7 @@ const SaleEmail = ({product}: SaleEmailProperties): JSX.Element => (
 								<strong className="text-red-500">{`$${product.currentPrice}`}</strong>
 							</Text>
 							<Text className="text-base">
-									Current Price:
+									Highest Price:
 								{' '}
 								<strong>{`$${product.highestPrice}`}</strong>
 							</Text>
