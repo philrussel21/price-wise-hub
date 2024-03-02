@@ -6,7 +6,7 @@ type RootLayoutProperties = {
 	children: React.ReactNode;
 };
 
-export const metadata = {
+const metadata = {
 	title: 'PriceWiseHub',
 	description: 'PriceWiseHub',
 };
@@ -23,6 +23,10 @@ const oswald = Oswald({
 	variable: '--font-sans-serif',
 });
 
+// Force nextjs to not build pages covered by this layout statically
+// as most of them contain dynamic and user-specific content.
+const dynamic = 'force-dynamic';
+
 const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
 	<html lang="en">
 		<body className="antialiased">
@@ -37,3 +41,8 @@ const RootLayout = ({children}: RootLayoutProperties): JSX.Element => (
 );
 
 export default RootLayout;
+
+export {
+	metadata,
+	dynamic,
+};
