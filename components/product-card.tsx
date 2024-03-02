@@ -23,15 +23,15 @@ const ProductCard = ({imageSrc, name, lowestPrice, highestPrice, currentPrice, u
 		<div className="flex-grow py-8 pr-8 flex flex-col justify-between">
 			<div className="space-y-2">
 				<Heading variant="heading-two" element="h3" label={`${name}`}/>
-				<div className="flex items-center">
+				<div className="flex items-center space-x-2">
 					<Heading variant="heading-five" label="Lowest Price:"/>
 					<Text variant="text-lead">{`$${lowestPrice}`}</Text>
 				</div>
-				<div className="flex items-center">
+				<div className="flex items-center space-x-2">
 					<Heading variant="heading-five" label="Current Price:"/>
 					<Text variant="text-lead" className={isOnSale ? 'text-red-500' : ''}>{`$${currentPrice}`}</Text>
 				</div>
-				<div className="flex items-center">
+				<div className="flex items-center space-x-2">
 					<Heading variant="heading-five" label="Highest Price:"/>
 					<Text variant="text-lead">{`$${highestPrice}`}</Text>
 				</div>
