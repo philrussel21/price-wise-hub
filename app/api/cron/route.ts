@@ -1,18 +1,45 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable unicorn/no-null */
-import type {PartialProductQuery, Product, ProductQuery, ProductSize} from '@app/config/common-types';
-import routes from '@app/config/routes';
-import {getAllProducts, upsertProduct} from '@app/data/product';
-import {getProductSubscriptionsById} from '@app/data/product-subscription';
-import {scrapeProduct} from '@app/utils/actions/track';
 import {revalidatePath} from 'next/cache';
 import {NextResponse} from 'next/server';
+import sendgrid from '@sendgrid/mail';
+import {render} from '@react-email/render';
 import {differenceWith, isEmpty, isNil, equals} from 'remeda';
+import {SaleEmail, RestockEmail} from '@app/emails';
+import {scrapeProduct} from '@app/utils/actions/track';
+import {formatDatabaseResponse, getAllProducts, upsertProduct} from '@app/data/product';
+import type {PartialProductQuery, Product, ProductQuery, ProductSize} from '@app/config/common-types';
+import routes from '@app/config/routes';
+import {getProductSubscriptionsById} from '@app/data/product-subscription';
 
 type ProductUpdateType = {
 	hasPriceChanged: boolean;
 	updatedSizes: ProductSize[];
 	product: ProductQuery;
+};
+
+type EmailNotificationType = 'restock' | 'sale';
+
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY ?? '');
+const fromAddress = process.env.SENGRID_FROM_ADDRESS ?? '';
+
+const sendEmailNotification = async (product: Product, recipient: string, type: EmailNotificationType): Promise<void> => {
+	let htmlMail = render(SaleEmail({product}));
+	let subject = `${product.name} on SALE!`;
+
+	if (type === 'restock') {
+		htmlMail = render(RestockEmail({product}));
+		subject = `${product.name} Restock!`;
+	}
+
+	const options = {
+		from: fromAddress,
+		to: recipient,
+		subject,
+		html: htmlMail,
+	};
+
+	await sendgrid.send(options);
 };
 
 const generateProductsToUpdate = (previousData: Product[], newData: PartialProductQuery[]): ProductUpdateType[] => {
@@ -96,16 +123,16 @@ export const GET = async (request: Request): Promise<NextResponse> => {
 			}
 
 			const updatedSizesLabels = updatedProduct.updatedSizes.map(size => size.label);
+			const formattedUpdatedProduct = formatDatabaseResponse(updatedProduct.product);
 
-			// TODO: replace with actual send email notification
 			if (!isEmpty(updatedSizesLabels) && updatedSizesLabels.includes(productSubscription.size)) {
-				// Send notification about product size availability based on chosen size
-				console.log('Send notification about selected size availability');
+				// Send notification about product size availability based on subscribed size
+				sendEmailNotification(formattedUpdatedProduct, productSubscription.userEmail, 'restock');
 			}
 
-			// TODO: replace with actual send email notification
 			if (updatedProduct.hasPriceChanged && updatedProduct.product.is_on_sale && productSubscription.isTrackingPrice) {
-				console.log('Send notification about product sale');
+				// Send notification about product price reduction
+				sendEmailNotification(formattedUpdatedProduct, productSubscription.userEmail, 'sale');
 			}
 		}
 	} catch (error: unknown) {

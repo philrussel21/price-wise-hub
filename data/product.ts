@@ -175,4 +175,5 @@ export {
 	getProduct,
 	getExistingProduct,
 	getAllProducts,
+	formatDatabaseResponse,
 };
